@@ -1,7 +1,7 @@
 import inquire from "inquirer";
 import { Roles } from "../../user/user.domain";
-import { InMemoryRepos } from "../../user/implements/InMemory.repos";
 import { CreateAdmUseCase } from "../../user/usecases/create-adm.use-case";
+import { PrismaUserRepos } from "../../user/implements/prisma-user.repos";
 
 const answers = inquire.prompt([
   {
@@ -26,7 +26,7 @@ const answers = inquire.prompt([
 
 answers.then(async (answers) => {
   try {
-    const repos = new InMemoryRepos();
+    const repos = new PrismaUserRepos();
     const input = {
       name: answers.name as string,
       email: answers.email as string,

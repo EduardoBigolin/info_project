@@ -1,17 +1,25 @@
 import { describe, expect, it } from "vitest";
 import { faker } from "@faker-js/faker";
 import { randomUUID } from "crypto";
-import { InMemoryRepos } from "../../src/user/implements/InMemory.repos";
 import { CreateUserUseCase } from "../../src/user/usecases/create-user.use-case";
+import { PrismaUserRepos } from "../../src/user/implements/prisma-user.repos";
+import { CreateAdmUseCase } from "../../src/user/usecases/create-adm.use-case";
+import { Roles } from "../../src/user/user.domain";
 
-describe("Create user Use Case", () => {
+describe("Create user Use Case", async () => {
+  const repos = new PrismaUserRepos();
+  await new CreateAdmUseCase(repos).execute({
+    register: "adminCase",
+    email: "admin@admin.com",
+    name: "Admin",
+    role: Roles.admin,
+  });
   it("Test create new user in DB with all data valid", async () => {
     const input = {
       register: randomUUID(),
       name: faker.name.fullName(),
       email: faker.internet.email(),
     };
-    const repos = new InMemoryRepos();
     await new CreateUserUseCase(repos).execute(input, "adminCase");
     const find = await repos.findByRegister(input.register);
     expect(find?.getRegister()).toBe(input.register);
@@ -25,8 +33,6 @@ describe("Create user Use Case", () => {
       name: faker.name.fullName(),
       email: faker.internet.email(),
     };
-    const repos = new InMemoryRepos();
-
     await repos.findByRegister(input.register);
     expect(
       async () => await new CreateUserUseCase(repos).execute(input, "")
