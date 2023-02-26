@@ -1,3 +1,4 @@
+import { BadRequestError } from "./User.error";
 export enum Roles {
   "admin" = "ADMIN",
   "user" = "USER",

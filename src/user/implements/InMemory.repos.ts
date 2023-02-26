@@ -9,7 +9,7 @@ export class InMemoryRepos implements UserRepository {
     return await this.users.find((user) => user.getRegister() === id);
   }
   async findByEmail(email: string): Promise<User | undefined> {
-    throw new Error("Method not implemented.");
+    return await this.users.find((user) => user.getEmail() === email);
   }
   async create(user: User): Promise<void> {
     await this.users.push(user);
