@@ -1,3 +1,4 @@
+import { RebbitmqServer } from "../../infra/rabbitmq/Server";
 import { Roles, User } from "../user.domain";
 import { UserDto } from "../user.dto";
 import { BadRequestError } from "../User.error";
@@ -20,7 +21,18 @@ export class CreateUserUseCase {
     }
 
     const userInput = new User(user.register, user.name, user.email, user.role);
-    const userData = this.userRepository.create(userInput);
+
+    const userData = await this.userRepository.create(userInput);
+    const emailForm = {
+      from: userData.getEmail(),
+      body: `
+      Hello, your account is authenticated,
+      Your password is ${userData.getRegister()}
+       `,
+    };
+    const server = new RebbitmqServer("amqp://admin:admin@localhost:5672");
+    await server.start();
+    await server.publishInQueue("email", JSON.stringify(emailForm));
 
     return userData;
   }

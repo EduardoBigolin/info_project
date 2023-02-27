@@ -8,9 +8,10 @@ import { Roles } from "../../src/user/user.domain";
 
 describe("Create user Use Case", async () => {
   const repos = new PrismaUserRepos();
+  const register = randomUUID();
   await new CreateAdmUseCase(repos).execute({
-    register: "adminCase",
-    email: "admin@admin.com",
+    register: register,
+    email: faker.internet.email(),
     name: "Admin",
     role: Roles.admin,
   });
@@ -20,7 +21,7 @@ describe("Create user Use Case", async () => {
       name: faker.name.fullName(),
       email: faker.internet.email(),
     };
-    await new CreateUserUseCase(repos).execute(input, "adminCase");
+    await new CreateUserUseCase(repos).execute(input, register);
     const find = await repos.findByRegister(input.register);
     expect(find?.getRegister()).toBe(input.register);
     expect(find?.getName()).toBe(input.name);
