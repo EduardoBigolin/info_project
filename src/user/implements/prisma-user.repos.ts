@@ -13,7 +13,7 @@ export class PrismaUserRepos implements UserRepository {
     if (!user) {
       return null;
     }
-    return new User(user.register, user.name, user.email, user.role as Roles);
+    return new User(user.register, user.name, user.email, user.role as Roles, user.password);
   }
   async findByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findFirst({
@@ -24,7 +24,7 @@ export class PrismaUserRepos implements UserRepository {
     if (!user) {
       return null;
     }
-    return new User(user.register, user.name, user.email, user.role as Roles);
+    return new User(user.register, user.name, user.email, user.role as Roles, user.password);
   }
   async create(user: User): Promise<User> {
     await prisma.user.create({
@@ -33,6 +33,7 @@ export class PrismaUserRepos implements UserRepository {
         name: user.getName(),
         email: user.getEmail(),
         role: user.getRole(),
+        password: await user.getPassword(),
       },
     });
     return user;

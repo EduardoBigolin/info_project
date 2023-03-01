@@ -1,3 +1,4 @@
+import { Hash } from "../utils/hash";
 import { BadRequestError } from "./User.error";
 export enum Roles {
   "admin" = "ADMIN",
@@ -9,17 +10,20 @@ export class User {
   private name: string;
   private email: string;
   private role: string;
+  private password: string;
 
   constructor(
     register: string,
     name: string,
     email: string,
-    role: Roles = Roles.user
+    role: Roles = Roles.user,
+    password: string
   ) {
     this.register = register;
     this.name = name;
     this.email = email;
     this.role = role;
+    this.password = password
     this.validate();
   }
 
@@ -39,6 +43,18 @@ export class User {
     return this.role;
   }
 
+  public async getPassword(): Promise<string> {
+    return await this.hashPassword()
+  }
+
+  public async hashPassword(): Promise<string> {
+    return await Hash.create(this.password)
+  }
+
+  public async comparePassword(passwordHash: string): Promise<boolean> {
+    return await Hash.compare(this.password, passwordHash);
+  }
+
   public getUser() {
     return {
       email: this.email,
@@ -49,6 +65,12 @@ export class User {
   }
 
   private validate(): void {
+    if (!this.password || this.password.trim().length === 0) {
+      throw new BadRequestError("password is required");
+    }
+    if (this.password.trim().length < 7) {
+      throw new BadRequestError("Invalid password format")
+    }
     if (!this.register || this.register.trim().length === 0) {
       throw new BadRequestError("User register is required");
     }

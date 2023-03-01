@@ -14,13 +14,16 @@ describe("Create user Use Case", async () => {
     email: faker.internet.email(),
     name: "Admin",
     role: Roles.admin,
+    password: faker.internet.password(8, true, /^[a-zA-Z]\w{3,14}$/),
   });
   it("Test create new user in DB with all data valid", async () => {
     const input = {
       register: randomUUID(),
       name: faker.name.fullName(),
       email: faker.internet.email(),
+      password: faker.internet.password(8)
     };
+
     await new CreateUserUseCase(repos).execute(input, register);
     const find = await repos.findByRegister(input.register);
     expect(find?.getRegister()).toBe(input.register);
@@ -33,6 +36,7 @@ describe("Create user Use Case", async () => {
       register: randomUUID(),
       name: faker.name.fullName(),
       email: faker.internet.email(),
+      password: faker.internet.password(8, true, /^[a-zA-Z]\w{3,14}$/)
     };
     await repos.findByRegister(input.register);
     expect(

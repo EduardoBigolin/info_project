@@ -5,12 +5,13 @@ import { BadRequestError } from "../User.error";
 import { UserRepository } from "../user.repos";
 
 export class CreateUserUseCase {
-  constructor(public userRepository: UserRepository) {}
+  constructor(public userRepository: UserRepository) { }
 
   async execute(user: UserDto, userRegister: string) {
     const userIsAdm = await this.userRepository.findByRegister(userRegister);
+    console.log("senha", user.password);
 
-    const userInput = new User(user.register, user.name, user.email, user.role);
+    const userInput = new User(user.register, user.name, user.email, user.role, user.password);
 
 
     if (await this.userRepository.findByEmail(user.email)) {
@@ -34,7 +35,7 @@ export class CreateUserUseCase {
     const server = new RebbitmqServer("amqp://admin:admin@localhost:5672");
     await server.start();
     await server.publishInQueue("email", JSON.stringify(emailForm));
-    
+
     return userData;
   }
 }

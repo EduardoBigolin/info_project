@@ -4,7 +4,7 @@ import { BadRequestError } from "../User.error";
 import { UserRepository } from "../user.repos";
 
 export class CreateAdmUseCase {
-  constructor(public userRepository: UserRepository) {}
+  constructor(public userRepository: UserRepository) { }
 
   async execute(user: UserDto) {
     if (await this.userRepository.findByEmail(user.email)) {
@@ -13,7 +13,7 @@ export class CreateAdmUseCase {
     if (await this.userRepository.findByRegister(user.register)) {
       throw new BadRequestError("This register at in use");
     }
-    const userInput = new User(user.register, user.name, user.email, user.role);
+    const userInput = new User(user.register, user.name, user.email, user.role, user.password);
 
     const userData = this.userRepository.create(userInput);
 
