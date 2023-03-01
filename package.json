@@ -6,7 +6,7 @@
   "scripts": {
     "test": "pnpm vitest",
     "dev:cli": "tsx ./src/infra/cli/index.ts",
-    "dev:server": "tsx ./src/infra/http/app.ts",
+    "dev:server": "tsx watch ./src/infra/http/app.ts",
     "db:migrate": "pnpm prisma migrate dev --name init"
   },
   "prisma": {

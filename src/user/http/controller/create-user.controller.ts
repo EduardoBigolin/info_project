@@ -1,13 +1,28 @@
-// import { Request, Response } from "express";
-// import { InMemoryRepos } from "../../implements/InMemory.repos";
-// import { CreateUserUseCase } from "../../usecases/create-user.use-case";
+import { Request, Response } from "express";
+import { PrismaUserRepos } from "../../implements/prisma-user.repos";
+import { CreateUserUseCase } from "../../usecases/create-user.use-case";
 
-// class CreateUserController {
-//   execute(req: Request, res: Response) {
-//     const user = req.user;
-//     const input = req.body;
-//     const repos = new InMemoryRepos();
-//     const useCase = new CreateUserUseCase(repos).execute(input, user.register)
-//     const result = 
-//   }
-// }
+export class CreateUserController {
+  static async execute(req: Request, res: Response) {
+    // Create auth user ....
+
+    try {
+      const user = {
+        register: "123123",
+      };
+      const input = req.body;
+      const repos = new PrismaUserRepos();
+      const useCase = await new CreateUserUseCase(repos).execute(
+        input,
+        user.register
+      );
+      res.json({
+        ok: "User Created with success",
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        error: error.message,
+      });
+    }
+  }
+}

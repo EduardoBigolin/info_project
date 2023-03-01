@@ -10,6 +10,9 @@ export class CreateUserUseCase {
   async execute(user: UserDto, userRegister: string) {
     const userIsAdm = await this.userRepository.findByRegister(userRegister);
 
+    const userInput = new User(user.register, user.name, user.email, user.role);
+
+
     if (await this.userRepository.findByEmail(user.email)) {
       throw new BadRequestError("This email at in use");
     }
@@ -19,8 +22,6 @@ export class CreateUserUseCase {
     if (userIsAdm?.getRole() !== Roles.admin) {
       throw new BadRequestError("You don't have permission");
     }
-
-    const userInput = new User(user.register, user.name, user.email, user.role);
 
     const userData = await this.userRepository.create(userInput);
     const emailForm = {
@@ -33,7 +34,7 @@ export class CreateUserUseCase {
     const server = new RebbitmqServer("amqp://admin:admin@localhost:5672");
     await server.start();
     await server.publishInQueue("email", JSON.stringify(emailForm));
-
+    
     return userData;
   }
 }
